@@ -1,0 +1,87 @@
+<html>
+<head></head>
+
+<body>
+<div style="display: flex; flex-direction: row;">
+  <table>
+    <caption>Facetracking</caption>
+    <tr>
+      <th>X</th>
+      <th>Y</th>
+      <th>Angle</th>
+      <th>Height</th>
+      <th>Width</th>
+      <th>Confidence</th>
+      <th>Time</th>
+    </tr><tr>
+      <td id="x"></td>
+      <td id="y"></td>
+      <td id="angle"></td>
+      <td id="height"></td>
+      <td id="width"></td>
+      <td id="confidence"></td>
+      <td id="time"></td>
+    </tr>
+  </table>
+
+  <table style="margin-left: 80px">
+    <caption>Headtracking</caption>
+    <tr>
+      <th>X</th>
+      <th>Y</th>
+      <th>Z</th>
+    </tr><tr>
+      <td id="headX"></td>
+      <td id="headY"></td>
+      <td id="headZ"></td>
+    </tr>
+  </table>
+</div>
+
+
+
+<canvas id="inputCanvas" width="320" height="240" style="display:none"></canvas>
+<video id="inputVideo" autoplay loop></video>
+</body>
+
+<script src="./headtrackr.js"></script>
+
+
+<script type="text/javascript">
+  var videoInput = document.getElementById('inputVideo');
+  var canvasInput = document.getElementById('inputCanvas');
+
+  // I had to change the Headtrackr src for it to work:
+  // - 179 video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+  // + 179 video.srcObject = stream;
+  var htracker = new headtrackr.Tracker({calcAngles: true});
+  htracker.init(videoInput, canvasInput);
+  htracker.start();
+
+document.addEventListener('headtrackrStatus', function (event) {
+  //console.log('status', event);
+  if (event.status == "getUserMedia") {
+    console.log("getUserMedia is supported!");
+  }
+});
+
+document.addEventListener('facetrackingEvent', function (event) {
+  document.getElementById("x").innerHTML = event.x;
+  document.getElementById("y").innerHTML = event.y;
+  document.getElementById("angle").innerHTML = Number(event.angle).toFixed(2);
+  document.getElementById("height").innerHTML = event.height;
+  document.getElementById("width").innerHTML = event.width;
+  document.getElementById("confidence").innerHTML = event.confidence;
+  document.getElementById("time").innerHTML = event.time;
+});
+
+document.addEventListener('headtrackingEvent', function (event) {
+  document.getElementById("headX").innerHTML = Number(event.x).toFixed(2);
+  document.getElementById("headY").innerHTML = Number(event.y).toFixed(2);
+  document.getElementById("headZ").innerHTML = Number(event.z).toFixed(2);
+});
+
+
+</script>
+
+</html>
